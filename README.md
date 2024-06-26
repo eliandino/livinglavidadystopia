@@ -1,3 +1,3 @@
 # livinglavidadystopia.github.io
 
-Woa! This is harder than it looks!
+Ok, so I finally did it!!!
