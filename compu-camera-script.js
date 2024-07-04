@@ -6,7 +6,7 @@ let usingRearCamera = false;
 document.getElementById('toggleCompuBtn').addEventListener('click', function () {
     // Getting the video element by id
 const video = document.getElementById('videoElement');
-const button = document.getElementById('toggleCameraBtn');
+const button = document.getElementById('toggleCompuBtn');
 const swappBtn = document.getElementById('swapCameraBtn');
 
 if (!stream) 
