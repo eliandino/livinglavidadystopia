@@ -1,9 +1,9 @@
 let stream = null;
 let usingRearCamera = false;
 
-document.getElementById('toggleMobileCameraButton').addEventListener('click', function() {
+document.getElementById('toggleMobileCameraBtn').addEventListener('click', function() {
     const video = document.getElementById('videoElement');
-    const toggleButton = document.getElementById('toggleMobileCameraButton');
+    const toggleButton = document.getElementById('toggleMobileCameraBtn');
     const swapButton = document.getElementById('swapCameraButton');
 
     if (!stream) {
