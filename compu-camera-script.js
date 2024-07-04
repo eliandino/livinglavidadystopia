@@ -1,16 +1,17 @@
 let stream = null;
+let usingRearCamera = false;
 
 
 
-document.getElementById('toggleCameraBtn').addEventListener('click', function () {
+document.getElementById('toggleCompuCameraBtn').addEventListener('click', function () {
     // Getting the video element by id
 const video = document.getElementById('videoElement');
 const button = document.getElementById('toggleCameraBtn');
+const swappBtn = document.getElementById('swapCameraBtn');
 
-if (!stream) {
-
-
-
+if (!stream) 
+    {
+   
 //checking for browser support
     if (navigator.mediaDevices.getUserMedia) {
         //Requesting access to the camera
@@ -36,9 +37,8 @@ if (!stream) {
     video.srcObject = null;
     video.style.display = 'none';
     stream = null;
-    button.textContent = 'Activate Camera';
+    button.textContent = 'Activar Camara';
 
-        
     }
 });
 
