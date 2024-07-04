@@ -1,10 +1,10 @@
 let stream = null;
 let usingRearCamera = false;
 
-document.getElementById('toggleMobileCameraBtn').addEventListener('click', function() {
+document.getElementById('toggleMobileBtn').addEventListener('click', function() {
     const video = document.getElementById('videoElement');
-    const toggleButton = document.getElementById('toggleMobileCameraBtn');
-    const swapButton = document.getElementById('swapCameraButton');
+    const toggleButton = document.getElementById('toggleMobileBtn');
+    const swapButton = document.getElementById('swapCameraBtn');  // Corrected ID
 
     if (!stream) {
         activateCamera();
@@ -46,7 +46,7 @@ document.getElementById('toggleMobileCameraBtn').addEventListener('click', funct
     }
 });
 
-document.getElementById('swapCameraButton').addEventListener('click', function() {
+document.getElementById('swapCameraBtn').addEventListener('click', function() {
     usingRearCamera = !usingRearCamera;
     if (stream) {
         deactivateCamera();
