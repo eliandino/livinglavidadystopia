@@ -1,0 +1,12 @@
+#qr-reader {
+    width: 300px;
+    margin: auto;
+}
+#video-container {
+    display: none;
+    text-align: center;
+}
+video {
+    width: 100%;
+    max-width: 600px;
+}
