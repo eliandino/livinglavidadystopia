@@ -1,3 +1,3 @@
 # livinglavidadystopia
 
-Ok, so I finally did it!!!
+This is an update to verify if camera is working apropiately. 
