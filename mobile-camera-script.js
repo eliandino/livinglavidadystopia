@@ -52,30 +52,4 @@ document.getElementById('swapCameraButton').addEventListener('click', function()
         deactivateCamera();
         activateCamera();
     }
-
-    function activateCamera() {
-        // Requesting access to the camera
-        navigator.mediaDevices.getUserMedia({
-            video: { facingMode: usingRearCamera ? 'environment' : 'user' }
-        })
-        .then(function (mediaStream) {
-            stream = mediaStream;
-            // Display the camera feed in the video element
-            const video = document.getElementById('videoElement');
-            video.srcObject = stream;
-            video.style.display = 'block';
-        })
-        .catch(function (error) {
-            console.error('Error accessing the camera:', error);
-        });
-    }
-
-    function deactivateCamera() {
-        // Stop all tracks in the stream to deactivate the camera
-        stream.getTracks().forEach(track => track.stop());
-        const video = document.getElementById('videoElement');
-        video.srcObject = null;
-        video.style.display = 'none';
-        stream = null;
-    }
 });
