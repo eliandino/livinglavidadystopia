@@ -18,7 +18,12 @@
     <!-- swapping camera -->
     <button id="swapCameraBtn" style="display: none;">Voltear Camara</button><br>
 
-
+    <label for="dropdown">Choose a Poem:</label>
+    <select name="dropdown" id="dropdown" onchange="navigateToPage()">
+        <option value="#">Choose</option>
+        <option value="./html_code/V1_Jurakan.html">Jurakan</option>
+        <option value="./html_code/about.html">Poema 2</option>
+    </select>
     <a href="./html_code/V1_Jurakan.html">Jurakan</a>
     <a href="./html_code/about.html"> About</a>
    
@@ -27,7 +32,8 @@
 
 
     <!-- scripts -->
-    <script src="/js_code/compu-camera-script.js"></script>
-    <script src="/js_code/mobile-camera-script.js"></script>
+    <script src="./js_code/compu-camera-script.js"></script>
+    <script src="./js_code/mobile-camera-script.js"></script>
+    <script src="./js_code/index_Home.js"></script>
 </body>
 </html>
