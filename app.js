@@ -158,25 +158,37 @@ async function start() {
   };
 
   const loader = new GLTFLoader();
-  loader.load(
-    CONFIG.MODEL_PATH,
-    gltf => {
-      anchor.group.add(gltf.scene);
-      clips = gltf.animations || [];
+  const loadGLTF = path =>
+    new Promise((resolve, reject) => loader.load(path, resolve, undefined, reject));
 
-      if (clips.length) {
-        mixer = new THREE.AnimationMixer(gltf.scene);
+  try {
+    const gltf = await loadGLTF(CONFIG.MODEL_PATH);
+    anchor.group.add(gltf.scene);
+
+    const clipMap = new Map();
+    (gltf.animations || []).forEach(clip => clipMap.set(clip.name, clip));
+
+    for (const animationPath of CONFIG.ANIMATION_PATHS || []) {
+      try {
+        const animationGltf = await loadGLTF(animationPath);
+        (animationGltf.animations || []).forEach(clip => clipMap.set(clip.name, clip));
+      } catch (error) {
+        console.error(`Failed to load animation file: ${animationPath}`, error);
       }
-
-      populateAnimationOptions();
-      chooseDefaultAnimation();
-    },
-    undefined,
-    error => {
-      console.error("GLTF load error:", error);
-      setStatus("Could not load the GLB. Check MODEL_PATH in config.js and confirm the file exists.");
     }
-  );
+
+    clips = [...clipMap.values()];
+
+    if (clips.length) {
+      mixer = new THREE.AnimationMixer(gltf.scene);
+    }
+
+    populateAnimationOptions();
+    chooseDefaultAnimation();
+  } catch (error) {
+    console.error("GLTF load error:", error);
+    setStatus("Could not load the GLB. Check MODEL_PATH in config.js and confirm the file exists.");
+  }
 
   try {
     await mindarThree.start();

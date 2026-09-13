@@ -45,7 +45,10 @@ MODEL_PATH: "./assets/models/book-hero.glb",
 
 ## 2. Animation clips
 
-Animations should already be embedded inside the GLB.
+Animations can come from two places:
+
+**A. Embedded in the character GLB itself.** The app automatically reads any
+animation clips already inside `MODEL_PATH` and adds them to the dropdown menu.
 
 Common animation names:
 
@@ -58,9 +61,27 @@ Talk
 Static
 ```
 
-The app automatically reads the animation names stored in the GLB and adds them to the dropdown menu.
+**B. Separate animation-only .glb files added later.** If you get new animations
+after the character is already exported, drop each file into:
 
-You can optionally set your preferred names in `config.js`:
+```text
+assets/animations/
+```
+
+Then list it in `config.js`:
+
+```js
+ANIMATION_PATHS: [
+  "./assets/animations/wave.glb",
+],
+```
+
+The app loads each file and merges its clips into the same dropdown. This only
+works if the animation file uses the same skeleton/bone names as the character
+in `MODEL_PATH` (true automatically when both come from the same rig). See
+`assets/animations/README.txt` for details.
+
+You can optionally set your preferred default animation in `config.js`:
 
 ```js
 PREFERRED_ANIMATIONS: {
@@ -69,7 +90,7 @@ PREFERRED_ANIMATIONS: {
 }
 ```
 
-Animation names must match the actual clip names inside the GLB.
+Animation names must match the actual clip names inside the GLB (or `ANIMATION_PATHS` file).
 
 ---
 
@@ -143,6 +164,8 @@ book-ar-character/
 └── assets/
     ├── models/
     │   └── your-character.glb
+    ├── animations/
+    │   └── wave.glb
     ├── targets/
     │   └── targets.mind
     └── images/

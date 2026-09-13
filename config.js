@@ -32,6 +32,14 @@ window.BOOK_AR_CONFIG = {
   // Compiled image target for AR marker scanning.
   TARGET_MIND_PATH: "./assets/targets/targets.mind",
 
+  // Optional extra animation-only .glb files (see assets/animations/README.txt).
+  // Their clips are merged into the Animation dropdown alongside any animations
+  // already embedded in MODEL_PATH. They must share the same skeleton/bone names
+  // as the character in MODEL_PATH.
+  ANIMATION_PATHS: [
+    // "./assets/animations/wave.glb",
+  ],
+
   // Optional preferred animation names.
   // These must exactly match clip names embedded in your GLB.
   PREFERRED_ANIMATIONS: {
