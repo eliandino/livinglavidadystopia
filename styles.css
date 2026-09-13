@@ -1,0 +1,243 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #090b10;
+  --panel: rgba(20, 24, 34, 0.94);
+  --panel-2: rgba(29, 35, 48, 0.95);
+  --text: #f3f6fb;
+  --muted: #9ca8bb;
+  --accent: #64d8ff;
+  --accent-2: #9b7bff;
+  --border: rgba(255, 255, 255, 0.09);
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(100, 216, 255, 0.08), transparent 34rem),
+    var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+button,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: max(18px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  color: var(--accent);
+  font-size: 0.77rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(1.6rem, 7vw, 2.4rem);
+}
+
+.viewer-card,
+.controls-card,
+.instructions {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px);
+}
+
+.viewer-card {
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+model-viewer {
+  display: block;
+  width: 100%;
+  height: min(64dvh, 620px);
+  min-height: 420px;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(100, 216, 255, 0.13), transparent 24rem),
+    linear-gradient(180deg, #171c27, #0d1017);
+}
+
+.poster {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  text-align: center;
+  color: var(--muted);
+  background: linear-gradient(180deg, #171c27, #0d1017);
+}
+
+.loader {
+  width: 44px;
+  height: 44px;
+  margin-inline: auto;
+  border: 4px solid rgba(255,255,255,0.15);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.ar-button {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  border: 0;
+  border-radius: 999px;
+  padding: 13px 18px;
+  color: #041016;
+  background: linear-gradient(135deg, var(--accent), #b5f1ff);
+  font-weight: 900;
+  box-shadow: 0 12px 30px rgba(100, 216, 255, 0.25);
+}
+
+.controls-card,
+.instructions {
+  margin-top: 14px;
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.control-row {
+  display: grid;
+  gap: 8px;
+}
+
+.control-row + .control-row,
+.button-row + .control-row {
+  margin-top: 14px;
+}
+
+.control-row label {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+select,
+.button-row button,
+.icon-btn {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--panel-2);
+}
+
+select {
+  width: 100%;
+  min-height: 46px;
+  border-radius: 14px;
+  padding: 0 13px;
+}
+
+.button-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.button-row button {
+  min-height: 44px;
+  border-radius: 13px;
+  font-weight: 800;
+}
+
+.button-row button:active,
+.icon-btn:active {
+  transform: translateY(1px);
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-weight: 900;
+}
+
+.switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.switch-label input {
+  width: 20px;
+  height: 20px;
+}
+
+.status {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.instructions p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.hidden {
+  display: none;
+}
+
+footer {
+  padding: 18px 6px 2px;
+  color: #667085;
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 480px) {
+  .button-row {
+    grid-template-columns: 1fr;
+  }
+
+  model-viewer {
+    min-height: 58dvh;
+  }
+}

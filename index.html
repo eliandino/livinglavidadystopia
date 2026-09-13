@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <title>Book AR Character</title>
+
+  <link rel="stylesheet" href="./styles.css" />
+
+  <!--
+    Google <model-viewer>
+    Handles GLB display and native AR launch on supported phones.
+  -->
+  <script
+    type="module"
+    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js">
+  </script>
+</head>
+
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Interactive Book Experience</p>
+        <h1 id="characterTitle">3D Character</h1>
+      </div>
+      <button id="infoBtn" class="icon-btn" type="button" aria-label="Show instructions">?</button>
+    </header>
+
+    <section class="viewer-card">
+      <model-viewer
+        id="viewer"
+        src="./assets/models/character.glb"
+        alt="Interactive 3D character"
+        camera-controls
+        touch-action="pan-y"
+        autoplay
+        auto-rotate
+        shadow-intensity="1"
+        exposure="1"
+        environment-image="neutral"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        ar-scale="auto"
+        camera-orbit="0deg 75deg 2.7m"
+        min-camera-orbit="auto auto 0.5m"
+        max-camera-orbit="auto auto 8m">
+
+        <button slot="ar-button" class="ar-button">
+          View in your space
+        </button>
+
+        <div slot="poster" class="poster">
+          <div class="loader"></div>
+          <p>Loading character…</p>
+        </div>
+
+        <div class="hotspot-help" slot="progress-bar"></div>
+      </model-viewer>
+    </section>
+
+    <section class="controls-card">
+      <div class="control-row">
+        <label for="animationSelect">Animation</label>
+        <select id="animationSelect">
+          <option value="__AUTO__">Auto / First animation</option>
+          <option value="__STATIC__">Static pose</option>
+        </select>
+      </div>
+
+      <div class="button-row">
+        <button id="playBtn" type="button">Play</button>
+        <button id="pauseBtn" type="button">Pause</button>
+        <button id="resetBtn" type="button">Reset View</button>
+      </div>
+
+      <div class="control-row compact">
+        <label class="switch-label">
+          <input id="rotateToggle" type="checkbox" checked />
+          <span>Auto rotate</span>
+        </label>
+      </div>
+
+      <p id="statusText" class="status">Preparing 3D viewer…</p>
+    </section>
+
+    <section id="instructions" class="instructions hidden">
+      <h2>How it works</h2>
+      <p>
+        The QR code should open this page after it is hosted online.
+        The page loads your GLB character and exposes any animation clips stored inside that GLB.
+      </p>
+      <p>
+        On supported devices, tap <strong>View in your space</strong> to launch AR.
+      </p>
+    </section>
+
+    <footer>
+      <span>Book AR Character Demo</span>
+    </footer>
+  </main>
+
+  <script src="./config.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
