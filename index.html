@@ -12,16 +12,24 @@
   <link rel="stylesheet" href="./styles.css" />
 
   <!--
-    Google <model-viewer>
-    Handles GLB display and native AR launch on supported phones.
+    three.js + MindAR image-target AR.
+    Requests camera permission and overlays the GLB character
+    on top of the recognized marker image.
   -->
-  <script
-    type="module"
-    src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.1.0/model-viewer.min.js">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+      "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+    }
+  }
   </script>
 </head>
 
 <body>
+  <div id="arContainer" class="ar-container"></div>
+
   <main class="app-shell">
     <header class="topbar">
       <div>
@@ -31,36 +39,9 @@
       <button id="infoBtn" class="icon-btn" type="button" aria-label="Show instructions">?</button>
     </header>
 
-    <section class="viewer-card">
-      <model-viewer
-        id="viewer"
-        src="./assets/models/character.glb"
-        alt="Interactive 3D character"
-        camera-controls
-        touch-action="pan-y"
-        autoplay
-        auto-rotate
-        shadow-intensity="1"
-        exposure="1"
-        environment-image="neutral"
-        ar
-        ar-modes="webxr scene-viewer quick-look"
-        ar-scale="auto"
-        camera-orbit="0deg 75deg 2.7m"
-        min-camera-orbit="auto auto 0.5m"
-        max-camera-orbit="auto auto 8m">
-
-        <button slot="ar-button" class="ar-button">
-          View in your space
-        </button>
-
-        <div slot="poster" class="poster">
-          <div class="loader"></div>
-          <p>Loading character…</p>
-        </div>
-
-        <div class="hotspot-help" slot="progress-bar"></div>
-      </model-viewer>
+    <section id="scanHint" class="scan-hint">
+      <div class="loader"></div>
+      <p id="scanHintText">Point your camera at the AR marker image.</p>
     </section>
 
     <section class="controls-card">
@@ -75,27 +56,19 @@
       <div class="button-row">
         <button id="playBtn" type="button">Play</button>
         <button id="pauseBtn" type="button">Pause</button>
-        <button id="resetBtn" type="button">Reset View</button>
       </div>
 
-      <div class="control-row compact">
-        <label class="switch-label">
-          <input id="rotateToggle" type="checkbox" checked />
-          <span>Auto rotate</span>
-        </label>
-      </div>
-
-      <p id="statusText" class="status">Preparing 3D viewer…</p>
+      <p id="statusText" class="status">Requesting camera permission…</p>
     </section>
 
     <section id="instructions" class="instructions hidden">
       <h2>How it works</h2>
       <p>
         The QR code should open this page after it is hosted online.
-        The page loads your GLB character and exposes any animation clips stored inside that GLB.
       </p>
       <p>
-        On supported devices, tap <strong>View in your space</strong> to launch AR.
+        This page asks for camera permission, then looks for the printed AR marker image in the book.
+        Point your phone's camera at that image to see the character appear on top of it.
       </p>
     </section>
 
@@ -105,6 +78,6 @@
   </main>
 
   <script src="./config.js"></script>
-  <script src="./app.js"></script>
+  <script type="module" src="./app.js"></script>
 </body>
 </html>

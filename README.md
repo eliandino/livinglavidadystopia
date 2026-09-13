@@ -6,11 +6,12 @@ A simple mobile-first web app for an interactive book project.
 
 1. A reader scans your QR code.
 2. The QR code opens this hosted webpage.
-3. The webpage loads your GLB character.
-4. Any animation clips inside the GLB appear in the Animation menu.
-5. On supported phones, the reader can tap **View in your space** to launch AR.
+3. The page asks for camera permission and starts scanning for a printed marker image.
+4. When the phone camera recognizes that marker image, your GLB character appears on top of it.
+5. Any animation clips inside the GLB appear in the Animation menu.
 
-This approach does not require the reader to install a custom app.
+This approach does not require the reader to install a custom app. Camera-based image
+tracking is provided by [MindAR](https://hiukim.github.io/mind-ar-js-doc/) + three.js.
 
 ---
 
@@ -72,7 +73,32 @@ Animation names must match the actual clip names inside the GLB.
 
 ---
 
-## 3. Where does the QR code go?
+## 3. Set up your AR marker image
+
+The camera looks for one specific image to know where to place your character. That
+image must be compiled into a `.mind` file before the app can recognize it.
+
+1. Pick or create the marker image (a book page, cover, or logo works well — high
+   contrast and lots of visual detail track better than a flat, symmetric icon).
+2. Open the official [MindAR image target compiler](https://hiukim.github.io/mind-ar-js-doc/tools/compile/)
+   in a browser.
+3. Drag in your marker image and download the resulting `targets.mind` file.
+4. Copy that file into:
+
+   ```text
+   assets/targets/targets.mind
+   ```
+
+5. Print the same marker image in the book, or make sure the reader has it on
+   another screen, so the camera has something to scan.
+
+If you change the marker image later, you must recompile and replace `targets.mind` —
+the app matches against whatever is currently in that file, set via `TARGET_MIND_PATH`
+in `config.js`.
+
+---
+
+## 4. Where does the QR code go?
 
 The QR code does NOT need to live inside this project.
 
@@ -93,14 +119,14 @@ Printed QR Code
       ↓
 Hosted webpage
       ↓
-GLB character
+Camera permission + marker scan
       ↓
-3D Viewer / AR
+GLB character overlaid on the marker
 ```
 
 ---
 
-## 4. GitHub Pages deployment
+## 5. GitHub Pages deployment
 
 Create a GitHub repository.
 
@@ -117,6 +143,8 @@ book-ar-character/
 └── assets/
     ├── models/
     │   └── your-character.glb
+    ├── targets/
+    │   └── targets.mind
     └── images/
 ```
 
@@ -133,41 +161,17 @@ Then:
 
 ---
 
-## 5. Android AR
+## 6. Android and iPhone AR
 
-Android phones can usually use the GLB directly through:
+Both platforms use the same in-browser camera AR (no Scene Viewer, Quick Look, or
+native app involved) as long as the page is served over HTTPS:
 
-```text
-Scene Viewer
-```
+- **Android**: works in Chrome and other Chromium-based browsers.
+- **iPhone / iPad**: works in Safari (iOS 13+) and other browsers that support
+  `getUserMedia` camera access.
 
-The app is already configured with:
-
-```html
-ar-modes="webxr scene-viewer quick-look"
-```
-
----
-
-## 6. iPhone / iPad AR
-
-The normal interactive 3D GLB viewer works in the browser.
-
-For the most reliable native iPhone AR experience, Apple Quick Look typically uses a `.usdz` file.
-
-If you create one, place it here:
-
-```text
-assets/models/character.usdz
-```
-
-Then set:
-
-```js
-IOS_USDZ_PATH: "./assets/models/character.usdz",
-```
-
-inside `config.js`.
+The reader just needs to allow the camera permission prompt and point the phone at
+the marker image set up in [step 3](#3-set-up-your-ar-marker-image).
 
 ---
 

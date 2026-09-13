@@ -11,25 +11,26 @@
 
   Then change MODEL_PATH below to match.
 
+  This app uses image-tracking AR: it opens the phone camera and
+  overlays the GLB on top of the marker image referenced by
+  TARGET_MIND_PATH. That .mind file is a compiled version of your
+  marker image — see README.md for how to (re)generate it.
+
   IMPORTANT:
   The QR code does NOT need to be stored in this project.
   The QR code should contain the PUBLIC URL of this web page
   after you host it, for example:
 
       https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/
-
-  Optional:
-  If you also have a USDZ file for iPhone Quick Look AR,
-  place it in /assets/models/ and set IOS_USDZ_PATH.
 */
 
 window.BOOK_AR_CONFIG = {
   CHARACTER_NAME: "Book Character",
 
-  MODEL_PATH: "./assets/models/character.glb",
+  MODEL_PATH: "./assets/models/Enrique-figure-3d-model-fbx.fbx.glb",
 
-  // Optional iPhone/iPad AR file. Leave blank if you do not have one.
-  IOS_USDZ_PATH: "",
+  // Compiled image target for AR marker scanning.
+  TARGET_MIND_PATH: "./assets/targets/targets.mind",
 
   // Optional preferred animation names.
   // These must exactly match clip names embedded in your GLB.

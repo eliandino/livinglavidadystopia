@@ -1,43 +1,57 @@
-const viewer = document.querySelector("#viewer");
+import * as THREE from "three";
+import { MindARThree } from "mindar-image-three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const CONFIG = window.BOOK_AR_CONFIG || {};
+
 const animationSelect = document.querySelector("#animationSelect");
 const playBtn = document.querySelector("#playBtn");
 const pauseBtn = document.querySelector("#pauseBtn");
-const resetBtn = document.querySelector("#resetBtn");
-const rotateToggle = document.querySelector("#rotateToggle");
 const statusText = document.querySelector("#statusText");
 const characterTitle = document.querySelector("#characterTitle");
 const infoBtn = document.querySelector("#infoBtn");
 const instructions = document.querySelector("#instructions");
+const scanHint = document.querySelector("#scanHint");
+const scanHintText = document.querySelector("#scanHintText");
+const arContainer = document.querySelector("#arContainer");
 
-const CONFIG = window.BOOK_AR_CONFIG || {};
+characterTitle.textContent = CONFIG.CHARACTER_NAME || "3D Character";
 
 function setStatus(message) {
   statusText.textContent = message;
 }
 
-function applyConfig() {
-  characterTitle.textContent = CONFIG.CHARACTER_NAME || "3D Character";
+let mixer = null;
+let clips = [];
+let currentAction = null;
+const clock = new THREE.Clock();
 
-  if (CONFIG.MODEL_PATH) {
-    viewer.src = CONFIG.MODEL_PATH;
-  }
+function playClip(name) {
+  if (!mixer) return;
+  const clip = clips.find(c => c.name === name);
+  if (!clip) return;
 
-  if (CONFIG.IOS_USDZ_PATH) {
-    viewer.setAttribute("ios-src", CONFIG.IOS_USDZ_PATH);
-  }
+  if (currentAction) currentAction.stop();
+  currentAction = mixer.clipAction(clip);
+  currentAction.reset().play();
 }
 
-function addAnimationOption(name) {
-  const option = document.createElement("option");
-  option.value = name;
-  option.textContent = name;
-  animationSelect.appendChild(option);
+function populateAnimationOptions() {
+  [...animationSelect.options]
+    .filter(option => !["__AUTO__", "__STATIC__"].includes(option.value))
+    .forEach(option => option.remove());
+
+  clips.forEach(clip => {
+    const option = document.createElement("option");
+    option.value = clip.name;
+    option.textContent = clip.name;
+    animationSelect.appendChild(option);
+  });
 }
 
-function chooseDefaultAnimation(availableAnimations) {
-  if (!availableAnimations.length) {
+function chooseDefaultAnimation() {
+  if (!clips.length) {
     animationSelect.value = "__STATIC__";
-    viewer.pause();
     setStatus("Character loaded. No animation clips were found in this GLB.");
     return;
   }
@@ -46,107 +60,138 @@ function chooseDefaultAnimation(availableAnimations) {
     CONFIG.PREFERRED_ANIMATIONS?.[CONFIG.DEFAULT_MODE] ||
     CONFIG.PREFERRED_ANIMATIONS?.idle;
 
-  const preferredMatch = availableAnimations.find(
-    name => name.toLowerCase() === String(preferred || "").toLowerCase()
+  const preferredMatch = clips.find(
+    c => c.name.toLowerCase() === String(preferred || "").toLowerCase()
   );
 
-  const selected = preferredMatch || availableAnimations[0];
+  const selected = preferredMatch ? preferredMatch.name : clips[0].name;
 
   animationSelect.value = selected;
-  viewer.animationName = selected;
-  viewer.play();
-
+  playClip(selected);
   setStatus(
-    `Loaded ${availableAnimations.length} animation clip${availableAnimations.length === 1 ? "" : "s"}. Playing: ${selected}`
+    `Loaded ${clips.length} animation clip${clips.length === 1 ? "" : "s"}. Playing: ${selected}`
   );
 }
 
-viewer.addEventListener("load", () => {
-  // Remove old generated options while preserving Auto and Static.
-  [...animationSelect.options]
-    .filter(option => !["__AUTO__", "__STATIC__"].includes(option.value))
-    .forEach(option => option.remove());
-
-  const animations = viewer.availableAnimations || [];
-  animations.forEach(addAnimationOption);
-  chooseDefaultAnimation(animations);
-});
-
-viewer.addEventListener("error", event => {
-  console.error("Model Viewer Error:", event);
-  setStatus(
-    "Could not load the GLB. Check MODEL_PATH in config.js and confirm the file exists."
-  );
-});
-
 animationSelect.addEventListener("change", () => {
   const value = animationSelect.value;
-  const animations = viewer.availableAnimations || [];
 
   if (value === "__STATIC__") {
-    viewer.pause();
+    if (currentAction) currentAction.stop();
     setStatus("Static pose mode.");
     return;
   }
 
   if (value === "__AUTO__") {
-    if (animations.length) {
-      viewer.animationName = animations[0];
-      viewer.play();
-      setStatus(`Playing first animation: ${animations[0]}`);
+    if (clips.length) {
+      playClip(clips[0].name);
+      setStatus(`Playing first animation: ${clips[0].name}`);
     } else {
-      viewer.pause();
       setStatus("No animations found. Showing static character.");
     }
     return;
   }
 
-  viewer.animationName = value;
-  viewer.play();
+  playClip(value);
   setStatus(`Playing: ${value}`);
 });
 
 playBtn.addEventListener("click", () => {
-  if ((viewer.availableAnimations || []).length === 0) {
+  if (!clips.length) {
     setStatus("This GLB does not contain animation clips.");
     return;
   }
 
-  if (animationSelect.value === "__STATIC__") {
-    animationSelect.value = viewer.availableAnimations[0];
-    viewer.animationName = viewer.availableAnimations[0];
+  let target = animationSelect.value;
+  if (target === "__STATIC__" || target === "__AUTO__") {
+    target = clips[0].name;
+    animationSelect.value = target;
   }
 
-  viewer.play();
-  setStatus(`Playing: ${viewer.animationName || "animation"}`);
+  playClip(target);
+  setStatus(`Playing: ${target}`);
 });
 
 pauseBtn.addEventListener("click", () => {
-  viewer.pause();
+  if (currentAction) currentAction.paused = true;
   setStatus("Animation paused.");
-});
-
-resetBtn.addEventListener("click", () => {
-  viewer.cameraOrbit = "0deg 75deg 2.7m";
-  viewer.cameraTarget = "auto auto auto";
-  viewer.fieldOfView = "auto";
-  setStatus("Camera view reset.");
-});
-
-rotateToggle.addEventListener("change", () => {
-  viewer.autoRotate = rotateToggle.checked;
 });
 
 infoBtn.addEventListener("click", () => {
   instructions.classList.toggle("hidden");
 });
 
-viewer.addEventListener("ar-status", event => {
-  if (event.detail.status === "failed") {
-    setStatus(
-      "AR could not start on this device. The normal 3D viewer will still work."
-    );
+async function start() {
+  if (!CONFIG.MODEL_PATH) {
+    setStatus("MODEL_PATH is not set in config.js.");
+    return;
   }
-});
 
-applyConfig();
+  if (!navigator.mediaDevices?.getUserMedia) {
+    setStatus("This browser does not support the camera access needed for AR.");
+    scanHintText.textContent = "Camera access is not supported on this browser.";
+    return;
+  }
+
+  const mindarThree = new MindARThree({
+    container: arContainer,
+    imageTargetSrc: CONFIG.TARGET_MIND_PATH || "./assets/targets/targets.mind",
+  });
+
+  const { renderer, scene, camera } = mindarThree;
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 1.2));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(0.5, 1, 0.3);
+  scene.add(dirLight);
+
+  const anchor = mindarThree.addAnchor(0);
+
+  anchor.onTargetFound = () => {
+    scanHint.classList.add("hidden");
+    setStatus(currentAction ? `Playing: ${currentAction.getClip().name}` : "Marker found.");
+  };
+
+  anchor.onTargetLost = () => {
+    scanHint.classList.remove("hidden");
+    scanHintText.textContent = "Marker lost. Point your camera at it again.";
+  };
+
+  const loader = new GLTFLoader();
+  loader.load(
+    CONFIG.MODEL_PATH,
+    gltf => {
+      anchor.group.add(gltf.scene);
+      clips = gltf.animations || [];
+
+      if (clips.length) {
+        mixer = new THREE.AnimationMixer(gltf.scene);
+      }
+
+      populateAnimationOptions();
+      chooseDefaultAnimation();
+    },
+    undefined,
+    error => {
+      console.error("GLTF load error:", error);
+      setStatus("Could not load the GLB. Check MODEL_PATH in config.js and confirm the file exists.");
+    }
+  );
+
+  try {
+    await mindarThree.start();
+  } catch (err) {
+    console.error("MindAR start error:", err);
+    setStatus("Camera permission was denied or unavailable. Allow camera access and reload.");
+    scanHintText.textContent = "Camera access is needed to scan the AR marker.";
+    return;
+  }
+
+  renderer.setAnimationLoop(() => {
+    const delta = clock.getDelta();
+    if (mixer) mixer.update(delta);
+    renderer.render(scene, camera);
+  });
+}
+
+start();
