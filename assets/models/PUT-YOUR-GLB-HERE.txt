@@ -1,0 +1,6 @@
+PLACE YOUR GLB FILE IN THIS FOLDER
+
+Default expected filename:
+character.glb
+
+Or change MODEL_PATH in /config.js to match your own filename.
